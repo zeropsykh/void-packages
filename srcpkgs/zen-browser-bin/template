@@ -1,0 +1,37 @@
+# Template file for 'zen-browser-bin'
+pkgname=zen-browser-bin
+version=1.17.15b
+revision=1
+archs="x86_64"
+hostmakedepends="tar xz"
+short_desc="Beautifully designed, privacy-focused firefox-based browser"
+maintainer="zeropsykh <zeropsykh@protonmail.me>"
+license="MPL-2.0"
+homepage="http://zen-browser.app"
+distfiles="https://github.com/zen-browser/desktop/releases/download/${version}/zen.linux-x86_64.tar.xz"
+checksum="13ef9d59e25c61b0af9b182f89ad1a5b08eb197d9e61668f145d752dda378778"
+
+depends="gtk+3 nss nspr libXt libxkbcommon ffmpeg"
+
+do_install() {
+	vmkdir /usr/bin
+	vmkdir /usr/lib/zen-browser
+	vmkdir /usr/share/applications
+	vmkdir /usr/share/icons
+
+	# Install package
+	vcopy * /usr/lib/zen-browser/
+
+	# Symbolic link the binary file
+	ln -sf /usr/lib/zen-browser/zen "${DESTDIR}"/usr/bin
+
+	# Install desktop file
+	vinstall "${FILESDIR}"/zen.desktop 644 /usr/share/applications
+
+	# Install icons
+	for i in 16x16 32x32 48x48 64x64 128x128; do
+		vinstall "${wrksrc}"/browser/chrome/icons/default/default${i%x*}.png 644 \
+			/usr/share/icons/hicolor/${i}/apps zen-browser.png
+	done
+}
+
